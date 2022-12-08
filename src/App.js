@@ -1,5 +1,8 @@
+/* eslint-disable no-unused-vars */
 import './App.css';
 import { Component, React } from 'react';
+import CardList from './components/card-list/CardList.jsx';
+import SearchBox from './components/search-box/SearchBox.jsx';
 
 class App extends Component {
   constructor() {
@@ -14,16 +17,19 @@ class App extends Component {
     fetch('https://jsonplaceholder.typicode.com/users')
       .then((response) => response.json())
       .then((users) =>
-        this.setState(
-          () => {
-            return { monsters: users };
-          },
-          () => {
-            console.log(this.state);
-          }
-        )
+        this.setState(() => {
+          return { monsters: users };
+        })
       );
   }
+
+  onSearchChange = (e) => {
+    const searchField = e.target.value.toLocaleLowerCase();
+
+    this.setState(() => {
+      return { searchField };
+    });
+  };
 
   render() {
     const filteredMonsters = this.state.monsters.filter((monster) => {
@@ -32,25 +38,13 @@ class App extends Component {
 
     return (
       <div className="App">
-        <input
-          className="search-box"
-          type="search"
+       <h1 className='app-title'>Monsters Card</h1>
+        <SearchBox
+          className="monster-search-box"
           placeholder="Search Monsters"
-          onChange={(e) => {
-            const searchField = e.target.value.toLocaleLowerCase();
-
-            this.setState(() => {
-              return { searchField };
-            });
-          }}
+          handleChange={this.onSearchChange}
         />
-        {filteredMonsters.map((monster) => {
-          return (
-            <div key={monster.id}>
-              <h1>{monster.name}</h1>
-            </div>
-          );
-        })}
+        <CardList monsters={filteredMonsters} />
       </div>
     );
   }
